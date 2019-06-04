@@ -286,6 +286,245 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fangyuan.xn--fiqs8s/2019/06/04/docker常用命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Linyuan">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="方~源·blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">docker常用命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-04T14:52:44+08:00">
+                2019-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="docker常用命令"><a href="#docker常用命令" class="headerlink" title="docker常用命令"></a>docker常用命令</h1><p>Docker 命令有两大类，客户端命令和服务端命令。前者是主要的操作接口，后者用来启动 Docker Daemon。</p>
+<pre><code>客户端命令：基本命令格式为 docker [OPTIONS] COMMAND [arg...]；
+
+服务端命令：基本命令格式为 dockerd [OPTIONS]。`
+
+可以通过 man docker 或 docker help 来查看这些命令。</code></pre><img src="/2019/06/04/docker常用命令/0.png" title="example">
+<h2 id="常用方法："><a href="#常用方法：" class="headerlink" title="常用方法："></a>常用方法：</h2><ul>
+<li>docker build -t friendlyname .# 使用此目录的 Dockerfile 创建镜像</li>
+<li>docker run -p 4000:80 friendlyname  # 运行端口 4000 到 90 的“友好名称”映射</li>
+<li>docker run -d -p 4000:80 friendlyname # 内容相同，但在分离模式下</li>
+<li>docker ps # 查看所有正在运行的容器的列表</li>
+<li>docker stop &lt;hash# 平稳地停止指定的容器</li>
+<li>docker ps -a   # 查看所有容器的列表，甚至包含未运行的容器</li>
+<li>docker kill &lt;hash  # 强制关闭指定的容器</li>
+<li>docker rm &lt;hash # 从此机器中删除指定的容器</li>
+<li>docker rm $(docker ps -a -q)   # 从此机器中删除所有容器</li>
+<li>docker images -a   # 显示此机器上的所有镜像</li>
+<li>docker rmi &lt;imagename   # 从此机器中删除指定的镜像</li>
+<li>docker rmi $(docker images -q) # 从此机器中删除所有镜像</li>
+<li>docker login # 使用您的 Docker 凭证登录此 CLI 会话</li>
+<li>docker tag &lt;imageusername/repository:tag  # 标记 &lt;image以上传到镜像库</li>
+<li>docker push username/repository:tag# 将已标记的镜像上传到镜像库</li>
+<li>docker run username/repository:tag   # 运行镜像库中的镜像</li>
+</ul>
+<hr>
+<ul>
+<li>docker stack ls  # 列出此 Docker 主机上所有正在运行的应用</li>
+<li>docker stack deploy -c <composefile> <appname>  # 运行指定的 Compose 文件</appname></composefile></li>
+<li>docker stack services <appname>   # 列出与应用关联的服务</appname></li>
+<li>docker stack ps <appname>   # 列出与应用关联的正在运行的容器</appname></li>
+<li>docker stack rm <appname> # 清除应用</appname></li>
+</ul>
+<hr>
+<ul>
+<li>以下是与 swarm 进行交互时您可能会运行的命令：</li>
+<li>docker-machine create –driver virtualbox myvm1 # 创建 VM（Mac、Win7、Linux）</li>
+<li>docker-machine create -d hyperv –hyperv-virtual-switch “myswitch” myvm1 # Win10</li>
+<li>docker-machine env myvm1# 查看有关节点的基本信息</li>
+<li>docker-machine ssh myvm1 “docker node ls” # 列出 swarm 中的节点</li>
+<li>docker-machine ssh myvm1 “docker node inspect <node id>“# 检查节点</node></li>
+<li>docker-machine ssh myvm1 “docker swarm join-token -q worker”   # 查看加入令牌</li>
+<li>docker-machine ssh myvm1   # 打开与 VM 的 SSH 会话；输入“exit”以结束会话</li>
+<li>docker-machine ssh myvm2 “docker swarm leave”  # 使工作节点退出 swarm</li>
+<li>docker-machine ssh myvm1 “docker swarm leave -f” # 使主节点退出，终止 swarm</li>
+<li>docker-machine start myvm1# 启动当前未运行的 VM</li>
+<li>docker-machine stop $(docker-machine ls -q)   # 停止所有正在运行的 VM</li>
+<li>docker-machine rm $(docker-machine ls -q) # 删除所有 VM 及其磁盘镜像</li>
+<li>docker-machine scp docker-compose.yml myvm1:~ # 将文件复制到节点的主目录</li>
+<li>docker-machine ssh myvm1 “docker stack deploy -c <file> <app>“   # 部署应用</app></file></li>
+</ul>
+<hr>
+<ul>
+<li>docker network ls#查看网络</li>
+<li>docker network inspect   +#查看某个网络的详细信息</li>
+<li> bridge模式：使用–net =bridge指定为每一个容器分配Network Namespace</li>
+<li> host模式：使用–net =host指定宿主机共用一个Network Namespace</li>
+<li> none模式：使用–net =none 指独立的网络，不与外界通信</li>
+<li> container模式：使用–net =container:NAMEorID指定 和一个指定的容器共享IP、端口（联盟式）、</li>
+<li>docker network inspect bridge  + 查看容器网络 （检查网络是查找容器IP地址的简便方法。）</li>
+<li>docker network disconnect bridge +bridge网络的名称  断开容器来从网络中删除容器</li>
+<li>docker network create -d bridge my_bridge 创建一个名为my_bridge网络</li>
+<li>docker run -d –net=my_bridge –name db training/postgres 运行一个容器使用my_bridge网络</li>
+</ul>
+<hr>
+<ul>
+<li>docker run -v /Users/<path></path>:/<container path>:ro(只读) IMAGE [COMMAND] [ARG…]  指定储存卷</container></li>
+<li>docker create -v +共享卷名字 –name XXX  +镜像 /bin/true   所有容器都使用共同的层</li>
+<li>docker run -d –volumes-from +共享名字 –name XXX1 +镜像</li>
+<li>docker run -d –volumes-from +共享名字 –name XXX2 +镜像</li>
+<li>docker volume ls -f dangling=true   查找悬空卷</li>
+<li>docker run –rm -v /foo -v awesome:/bar busybox top 删除容器后需要数据卷任然存在此命令创建匿名/foo卷。移除容器后，Docker Engine会删除/foo卷但不会删除awesome卷。</li>
+<li>docker volume prune  删除未使用的卷</li>
+</ul>
+<hr>
+<h2 id="参考文档："><a href="#参考文档：" class="headerlink" title="参考文档："></a>参考文档：</h2><ul>
+<li><p><a href="https://yeasy.gitbooks.io/docker_practice/appendix/command/" target="_blank" rel="noopener">https://yeasy.gitbooks.io/docker_practice/appendix/command/</a></p>
+</li>
+<li><p><a href="https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities</a></p>
+<img src="/2019/06/04/docker常用命令/1.png" title="example">
+
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker命令1/" rel="tag"># docker命令1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/03/使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录/" rel="next" title="使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录">
+                <i class="fa fa-chevron-left"></i> 使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://fangyuan.xn--fiqs8s/2019/06/03/使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -443,6 +682,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/06/04/docker常用命令/" rel="prev" title="docker常用命令">
+                docker常用命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -562,7 +805,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" rel="gallery_cjwhfgtza00019sv41exuixu9" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" rel="gallery_cjwhh6nao000678v4812zwmpu" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" itemprop="contentUrl">
               </a>
             
@@ -775,7 +1018,7 @@ jing1234567890.github.io (185.199.111.153) 56(84) bytes of data，解析到的ip
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -786,7 +1029,7 @@ jing1234567890.github.io (185.199.111.153) 56(84) bytes of data，解析到的ip
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -797,7 +1040,7 @@ jing1234567890.github.io (185.199.111.153) 56(84) bytes of data，解析到的ip
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
