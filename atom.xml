@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://fangyuan.xn--fiqs8s/"/>
-  <updated>2019-06-03T07:22:58.588Z</updated>
+  <updated>2019-06-04T06:11:52.808Z</updated>
   <id>http://fangyuan.xn--fiqs8s/</id>
   
   <author>
@@ -21,13 +21,13 @@
     <link href="http://fangyuan.xn--fiqs8s/2019/06/03/%E4%BD%BF%E7%94%A8ssh-keygen%E5%92%8Cssh-copy-id%E4%B8%89%E6%AD%A5%E5%AE%9E%E7%8E%B0SSH%E6%97%A0%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95/"/>
     <id>http://fangyuan.xn--fiqs8s/2019/06/03/使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录/</id>
     <published>2019-06-03T07:08:27.000Z</published>
-    <updated>2019-06-03T07:22:58.588Z</updated>
+    <updated>2019-06-04T06:11:52.808Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录"><a href="#使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录" class="headerlink" title="使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录"></a>使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录</h1><h2 id="linux免密登陆"><a href="#linux免密登陆" class="headerlink" title="linux免密登陆"></a>linux免密登陆</h2><a id="more"></a><ul><li><p>ssh-keygen  产生公钥与私钥对.<br>ssh-copy-id 将本机的公钥复制到远程机器的authorized_keys文件中，ssh-copy-id也能让你有到远程机器的home, ~./ssh , 和 ~/.ssh/authorized_keys的权利</p><h2 id="详细步骤："><a href="#详细步骤：" class="headerlink" title="详细步骤："></a>详细步骤：</h2></li><li><p>（a）ssh-keygen  #一路回车</p><blockquote><p>用cat命令查看是否生成产生公钥私钥对/</p></blockquote></li></ul><blockquote><p> <code>cat  root/.ssh/ id_rsa.pub</code></p></blockquote><hr><ul><li>（b）用ssh-copy-id将公钥复制到远程机器中</li></ul><blockquote><p><code>ssh-copy-id -i .ssh/id_rsa.pub  用户名字@172.16.3.4</code><br>注意: ssh-copy-id 将key写到远程机器的 ~/ .ssh/authorized_key.文件中#或者直接用ssh-copy-id   服务器IP</p></blockquote><hr><ul><li>（c）登录到远程机器不用输入密码</li></ul><blockquote><p>[root@VM_3_13_centos ~]# <code>ssh root@172.16.3.4</code><br>Last failed login: Thu May 16 21:53:30 CST 2019 from 40.73.39.211 on ssh:notty<br>There was 1 failed login attempt since the last successful login.<br>Last login: Thu May 16 21:45:56 2019 from 172.16.3.13<br>[root@VM_3_4_centos ~]# </p></blockquote><hr><p>更详细的参考：<br><a href="https://blog.csdn.net/alifrank/article/details/48241699" target="_blank" rel="noopener">https://blog.csdn.net/alifrank/article/details/48241699</a></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录"><a href="#使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录" class="headerlink" title="使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录"></a>使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录</h1><h2 id="linux免密登陆"><a href="#linux免密登陆" class="headerlink" title="linux免密登陆"></a>linux免密登陆</h2><ul><li><p>ssh-keygen  产生公钥与私钥对.<br>ssh-copy-id 将本机的公钥复制到远程机器的authorized_keys文件中，ssh-copy-id也能让你有到远程机器的home, ~./ssh , 和 ~/.ssh/authorized_keys的权利</p><h2 id="详细步骤："><a href="#详细步骤：" class="headerlink" title="详细步骤："></a>详细步骤：</h2></li><li><p>（a）ssh-keygen  #一路回车</p><blockquote><p>用cat命令查看是否生成产生公钥私钥对/</p></blockquote></li></ul><blockquote><p> <code>cat  root/.ssh/ id_rsa.pub</code></p></blockquote><hr><ul><li>（b）用ssh-copy-id将公钥复制到远程机器中</li></ul><blockquote><p><code>ssh-copy-id -i .ssh/id_rsa.pub  用户名字@172.16.3.4</code><br>注意: ssh-copy-id 将key写到远程机器的 ~/ .ssh/authorized_key.文件中#或者直接用ssh-copy-id   服务器IP</p></blockquote><hr><ul><li>（c）登录到远程机器不用输入密码</li></ul><blockquote><p>[root@VM_3_13_centos ~]# <code>ssh root@172.16.3.4</code><br>Last failed login: Thu May 16 21:53:30 CST 2019 from 40.73.39.211 on ssh:notty<br>There was 1 failed login attempt since the last successful login.<br>Last login: Thu May 16 21:45:56 2019 from 172.16.3.13<br>[root@VM_3_4_centos ~]# </p></blockquote><hr><p>更详细的参考：<br><a href="https://blog.csdn.net/alifrank/article/details/48241699" target="_blank" rel="noopener">https://blog.csdn.net/alifrank/article/details/48241699</a></p>]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录&quot;&gt;&lt;a href=&quot;#使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录&quot; class=&quot;headerlink&quot; title=&quot;使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录&quot;&gt;&lt;/a&gt;使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录&lt;/h1&gt;&lt;h2 id=&quot;linux免密登陆&quot;&gt;&lt;a href=&quot;#linux免密登陆&quot; class=&quot;headerlink&quot; title=&quot;linux免密登陆&quot;&gt;&lt;/a&gt;linux免密登陆&lt;/h2&gt;
+      使用ssh-keygen和ssh-copy-id三步实现SSH无密码登录
     
     </summary>
     
