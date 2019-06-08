@@ -286,6 +286,312 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fangyuan.xn--fiqs8s/2019/06/08/命令进入容器的方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Linyuan">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="方~源·blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">命令进入容器的方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-08T09:56:56+08:00">
+                2019-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="命令进入容器的方式"><a href="#命令进入容器的方式" class="headerlink" title="命令进入容器的方式"></a>命令进入容器的方式</h1><h2 id="让我们实验一下docker进入容器常用的四种方法；"><a href="#让我们实验一下docker进入容器常用的四种方法；" class="headerlink" title="让我们实验一下docker进入容器常用的四种方法；"></a>让我们实验一下docker进入容器常用的四种方法；</h2><ul>
+<li>使用docker attach（docker原生自带命令）</li>
+</ul>
+<ul>
+<li>使用SSH  （需要容器内安装对应的ssh server）</li>
+</ul>
+<ul>
+<li>使用nsenter  （需要服务器安装命令）</li>
+</ul>
+<ul>
+<li>使用exec   （docker原生自带命令）</li>
+</ul>
+<h2 id="一、使用docker-attach进入Docker容器"><a href="#一、使用docker-attach进入Docker容器" class="headerlink" title="一、使用docker attach进入Docker容器"></a>一、使用docker attach进入Docker容器</h2><ul>
+<li>由于attache为docker自带的客户端命令，可以直接使用</li>
+<li>1、随便运行一个容器： sudo  docker run -itd ubuntu:14.04 /bin/bash</li>
+</ul>
+<img src="/2019/06/08/命令进入容器的方法/0.png">
+
+<ul>
+<li>2、用docker ps  -l  （指定看最后一个运行的容器）获取容器id 为45d4b5d25e03 </li>
+</ul>
+<ul>
+<li>3、用命令进入： docker attach 45d4b5d25e03  回车一下</li>
+<li>4、多窗口进入容器发现执行命令是同步的<img src="/2019/06/08/命令进入容器的方法/1.png">
+
+</li>
+</ul>
+<blockquote>
+<p>结论：该命令多个窗口同时使用该命令进入该容器时，所有的窗口都会同步显示，如果有一个窗口阻塞了，那么其他窗口也无法再进行操作。所以docker attach命令不太适合于生产环境.</p>
+</blockquote>
+<h2 id="二、使用SSH进入Docker容器"><a href="#二、使用SSH进入Docker容器" class="headerlink" title="二、使用SSH进入Docker容器"></a>二、使用SSH进入Docker容器</h2><blockquote>
+<p>在镜像（或容器）中安装SSH Server，这样就能保证多人进入<br>容器且相互之间不受干扰了，相信大家在当前的生产环境中（没有使用Docker的情况）也是这样做的。但是使用了Docker容器之后不建议使用ssh进入到Docker容<br>器内。参考：<a href="https://www.oschina.net/translate/why-you-dont-need-to-run-sshd-in-docker?cmp" target="_blank" rel="noopener">https://www.oschina.net/translate/why-you-dont-need-to-run-sshd-in-docker?cmp</a></p>
+</blockquote>
+<ul>
+<li>1、运行   <code>docker run -t -i tcbenkhard/centos6-jdk7   /bin/bash</code></li>
+<li>2、进入后修改密码：如果没有passwd命令，就用yum -y install  passwd</li>
+<li>passwd  更新root密码为666</li>
+<li><code>yum -y install  openssh-server  openssh-clients</code>    安装Openssh，使用命令安装ssh server/clien</li>
+</ul>
+<ul>
+<li><code>vi  /etc/ssh/sshd_config</code>  修改SSH配置文件以下选项，去掉#注释，将四个选项启用</li>
+</ul>
+<pre><code>RSAAuthentication yes #启用 RSA 认证
+
+PubkeyAuthentication yes #启用公钥私钥配对认证方式
+
+AuthorizedKeysFile .ssh/authorized_keys #公钥文件路径（和上面生成的文件同）
+
+PermitRootLogin yes #root能使用ssh登录</code></pre><ul>
+<li><p>3、重启ssh服务，并设置开机启动</p>
+</li>
+<li><h1 id="service-sshd-restart-chkconfig-sshd-on"><a href="#service-sshd-restart-chkconfig-sshd-on" class="headerlink" title="service sshd restart; chkconfig sshd on"></a><code>service sshd restart; chkconfig sshd on</code></h1></li>
+<li><p>4、使用exit命令或者ctrl+C来退出当前运行的容器</p>
+</li>
+<li><h1 id="exit"><a href="#exit" class="headerlink" title="exit"></a>exit</h1></li>
+<li><p>5、验证ssh登陆ssh -p 50001   <a href="mailto:root@169.254.32.6" target="_blank" rel="noopener">root@169.254.32.6</a></p>
+</li>
+<li><h1 id="以最新的Ubuntu镜像为模板"><a href="#以最新的Ubuntu镜像为模板" class="headerlink" title="以最新的Ubuntu镜像为模板"></a>以最新的Ubuntu镜像为模板</h1><p>  FROM ubuntu:latest   # 以最新的Ubuntu镜像为模板</p>
+<p>  // 将本目录下的sources.list作为容器的一个文件<br>  ADD sources.list /root/sources.list</p>
+<p>  // 使用阿里Ubuntu源，更新快<br>  RUN cp /root/sources.list  /etc/apt/sources.list.d/aliyun.list</p>
+<p>  RUN apt-get update</p>
+<p>  RUN apt-get install -y openssh-server</p>
+<p>  RUN apt-get install -y net-tools</p>
+<p>  RUN apt-get install -y vim</p>
+<p>  RUN mkdir -p /var/run/sshd</p>
+<p>  RUN mkdir -p mkdir/root/.ssh/<br>  // 修改root密码，便于远程登录</p>
+<p>  RUN echo root:123456 | chpasswd<br>  // 将key生成在指定文件内</p>
+<p>  RUN ssh-keygen -q -t rsa -b 2048  -f /etc/ssh/ssh_host_rsa_key -P ‘’ -N ‘’<br>  // 配置ssh可以使用root登陆</p>
+<p>  RUN sed -i ‘s/PermitRootLogin without-password/PermitRootLogin yes/‘ /etc/ssh/sshd_config</p>
+<p>  // 开放22端口<br>  EXPOSE 22</p>
+<p>  CMD /usr/sbin/sshd -D &amp;</p>
+</li>
+</ul>
+<ul>
+<li><p>使用docker build  -t tag名  .    。然后启动并连接。</p>
+<h2 id="三、使用nsenter进入Docker容器"><a href="#三、使用nsenter进入Docker容器" class="headerlink" title="三、使用nsenter进入Docker容器"></a>三、使用nsenter进入Docker容器</h2></li>
+<li><p>先看nsenter的git的简介：<a href="https://github.com/jpetazzo/nsenter" target="_blank" rel="noopener">https://github.com/jpetazzo/nsenter</a><br>1、使用前提：</p>
+</li>
+</ul>
+<blockquote>
+</blockquote>
+<p>仅适用于Intel 64位平台</p>
+<blockquote>
+<p>需要从主机运行; 它无法在容器内运行</p>
+</blockquote>
+<blockquote>
+<p>要把 nsenter 安装到主机中</p>
+</blockquote>
+<p>2、安装步骤；</p>
+<p>$   wget <a href="https://www.kernel.org/pub/linux/utils/util-linux/v2.24/util-linux-2.24.tar.gz" target="_blank" rel="noopener">https://www.kernel.org/pub/linux/utils/util-linux/v2.24/util-linux-2.24.tar.gz</a></p>
+<p>$   tar -xzvf util-linux-2.24.tar.gz</p>
+<p>$   cd util-linux-2.24/</p>
+<p>$   ./configure –without-ncurses</p>
+<p>$   make nsenter</p>
+<p>$   sudo cp nsenter /usr/local/bin</p>
+<p>3、使用可以先看看命令用法：nsenter –help</p>
+<p>a、需要运行中容器的CONTAINER ID</p>
+<p>通过docker  ps   查看要进入的容器的id</p>
+<p>b、 获取到容器id后，查看容器的pid</p>
+<pre><code>docker inspect --format {{.State.Pid}}  +&lt;容器id&gt;</code></pre><p>c、拿到该进程PID之后我们就可以使用nsenter命令访问该容器</p>
+<p>方法1、<code>sudo nsenter --target &lt;PID号&gt; --mount --uts --ipc --net --pid</code><br>            或者nsenter -t pid号 -n 就 可以进入，这时你执行 ip a 时IP为容器IP。</p>
+<p>方法2、  使用shell脚本 docker-enter，将如下代码保存为docker-enter,  chomod +x docker-enter</p>
+<p>将文件放入PATH路径，mv docker-enter /usr/bin 下</p>
+<p>用法：docker-enter   这里输入docker获取的docker名或者dockerID，就可以进入。</p>
+<p>`#!/bin/sh</p>
+<p>`if [ -e $(dirname “$0”)/nsenter ]; then</p>
+<pre><code># with boot2docker, nsenter is not in the PATH but it is in the same folder
+
+NSENTER=$(dirname &quot;$0&quot;)/nsenter </code></pre><p>else</p>
+<pre><code>NSENTER=nsenter</code></pre><p>fi</p>
+<p>if [ -z “$1” ]; then    </p>
+<pre><code>echo &quot;Usage: `basename &quot;$0&quot;` CONTAINER [COMMAND [ARG]...]&quot;
+
+echo &quot;&quot; 
+
+echo &quot;Enters the Docker CONTAINER and executes the specified COMMAND.&quot;
+
+echo &quot;If COMMAND is not specified, runs an interactive shell in CONTAINER.&quot;</code></pre><p>else</p>
+<pre><code>PID=$(docker inspect --format &quot;{{.State.Pid}}&quot; &quot;$1&quot;)
+
+if [ -z &quot;$PID&quot; ]; then
+
+        exit 1  
+fi   
+
+shift
+
+OPTS=&quot;--target $PID --mount --uts --ipc --net --pid --&quot;
+
+if [ -z &quot;$1&quot; ]; then
+        # No command given.
+        # Use su to clear all host environment variables except for TERM,
+        # initialize the environment variables HOME, SHELL, USER, LOGNAME, PATH,
+        # and start a login shell.
+        &quot;$NSENTER&quot; $OPTS 
+else
+        # Use env to clear all host environment variables.
+        &quot;$NSENTER&quot; $OPTS env --ignore-environment -- &quot;$@&quot;
+fi</code></pre><p>fi``</p>
+<img src="/2019/06/08/命令进入容器的方法/2.png">
+
+<h2 id="四、使用docker-exec进入Docker容器"><a href="#四、使用docker-exec进入Docker容器" class="headerlink" title="四、使用docker exec进入Docker容器"></a>四、使用docker exec进入Docker容器</h2><blockquote>
+<p>docker在1.3.X版本之后还提供了一个新的命令exec用于进入容器，这种方式相对更简单常用一些，下面我们来看一下该命令的使用：</p>
+</blockquote>
+<p>$ docker exec –help</p>
+<p>$ docker exec -it   容器id   /bin/bash</p>
+<img src="/2019/06/08/命令进入容器的方法/3.png">
+
+<p>以上是一个回顾也是一个整理，温故知新。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker进入容器/" rel="tag"># docker进入容器</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/05/负载均衡/" rel="next" title="负载均衡">
+                <i class="fa fa-chevron-left"></i> 负载均衡
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://fangyuan.xn--fiqs8s/2019/06/05/负载均衡/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -377,7 +683,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://i.loli.net/2018/02/09/5a7d6a402e15e.jpg" rel="gallery_cjwi5ay2h000674v4tyzu50oj" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="https://i.loli.net/2018/02/09/5a7d6a402e15e.jpg" rel="gallery_cjwmx9vl0000720v4rpf7e68m" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://i.loli.net/2018/02/09/5a7d6a402e15e.jpg" itemprop="contentUrl">
               </a>
             
@@ -390,7 +696,6 @@
 
       
         <h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><h1 id="一、负载均衡"><a href="#一、负载均衡" class="headerlink" title="一、负载均衡"></a>一、负载均衡</h1><p>负载均衡的目的就是让请求到达不同的服务器上。一次请求到服务器之间，有那么多环节，因此可以实现的方法有很多种，实际应用中不外乎以下几种方式。</p>
-<a id="more"></a>
 <h2 id="1-HTTP重定向负载均衡"><a href="#1-HTTP重定向负载均衡" class="headerlink" title="1.HTTP重定向负载均衡"></a>1.HTTP重定向负载均衡</h2><ul>
 <li>HTTP重定向负载均衡有一台重定向服务器，它也是一台普通的服务器，其唯一的功能就是根据用户的HTTP请求计算一台应用集群中服务器的地址，并将此地址写入HTTP重定向响应中返回给用户。</li>
 </ul>
@@ -487,6 +792,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/08/命令进入容器的方法/" rel="prev" title="命令进入容器的方法">
+                命令进入容器的方法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -610,8 +919,7 @@
 
 服务端命令：基本命令格式为 dockerd [OPTIONS]。`
 
-可以通过 man docker 或 docker help 来查看这些命令。</code></pre><p>&lt; !–  more  –&gt;</p>
-<img src="/2019/06/04/docker常用命令/0.png">
+可以通过 man docker 或 docker help 来查看这些命令。</code></pre><img src="/2019/06/04/docker常用命令/0.png">
 <h2 id="常用方法："><a href="#常用方法：" class="headerlink" title="常用方法："></a>常用方法：</h2><ul>
 <li>docker build -t friendlyname .# 使用此目录的 Dockerfile 创建镜像</li>
 <li>docker run -p 4000:80 friendlyname  # 运行端口 4000 到 90 的“友好名称”映射</li>
@@ -1040,7 +1348,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" rel="gallery_cjwi5ay2f000574v40jjnx320" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" rel="gallery_cjwmx9vkw000620v4w8f54sck" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="http://bruce.u.qiniudn.com/2013/11/27/reading/photos-1.jpg" itemprop="contentUrl">
               </a>
             
@@ -1064,7 +1372,7 @@
 </ul>
 <hr>
 
-<a id="more"></a>
+
 
 <h2>一、环境准备：需要git，nvm，nodejs，hexo</h2>
 <p>1、安装git：
@@ -1253,7 +1561,7 @@ jing1234567890.github.io (185.199.111.153) 56(84) bytes of data，解析到的ip
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1275,7 +1583,7 @@ jing1234567890.github.io (185.199.111.153) 56(84) bytes of data，解析到的ip
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
